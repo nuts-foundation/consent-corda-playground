@@ -48,7 +48,6 @@ data class ConsentState(val patientId: String,
     override val linearId: UniqueIdentifier get() = UniqueIdentifier("${professionalId}_${patientId}_${organisationId}")
     override val participants: List<AbstractParty> get() = parties
 
-    // what does the persistance DO???
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {
             is ConsentSchemaV1 -> ConsentSchemaV1.PersistentConsent(
