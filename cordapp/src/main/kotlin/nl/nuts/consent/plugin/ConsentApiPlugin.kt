@@ -4,7 +4,8 @@ import net.corda.webserver.services.WebServerPluginRegistry
 import nl.nuts.consent.api.ConsentApi
 import java.util.function.Function
 
-class ConsentPlugin  : WebServerPluginRegistry {
+// Legacy interface
+class ConsentApiPlugin  : WebServerPluginRegistry {
     /**
      * A list of classes that expose web APIs.
      */
