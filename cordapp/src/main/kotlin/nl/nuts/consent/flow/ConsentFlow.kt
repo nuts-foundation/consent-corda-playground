@@ -77,9 +77,11 @@ object ConsentFlow {
             // Generate an unsigned transaction.
             //val state = ConsentState(bsn, agbCode, customerCode, serviceHub.myInfo.legalIdentities.first(), bsnParty)
 
+            val me = serviceHub.myInfo.legalIdentities.first()
+
             // add me as party, if you add stuff from a consent app, you want stuff to be visible to that app as well????
             // but that app should only see the consent record, not the data! => split in two records?
-            val state = ConsentState(patientId, professionalId, organisationId, purpose, source, parties)
+            val state = ConsentState(patientId, professionalId, organisationId, purpose, source, parties + me)
 
             val txCommand = Command(ConsentContract.Commands.Create(), state.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)

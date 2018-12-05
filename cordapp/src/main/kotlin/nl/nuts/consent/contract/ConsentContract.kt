@@ -29,7 +29,7 @@ import nl.nuts.consent.state.ConsentState
 class ConsentContract : Contract {
     companion object {
         // Used to identify our contract when building a transaction.
-        const val CONTRACT_ID = "ConsentContract"
+        const val CONTRACT_ID = "nl.nuts.consent.contract.ConsentContract"
     }
 
     // A transaction is valid if the verify() function of the contract of all the transaction's input and output state
