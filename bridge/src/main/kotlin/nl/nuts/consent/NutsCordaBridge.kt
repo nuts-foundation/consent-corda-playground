@@ -1,4 +1,4 @@
-package nl.nuts.consent.bridge
+package nl.nuts.consent
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties

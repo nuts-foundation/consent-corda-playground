@@ -1,13 +1,13 @@
-package nl.nuts.consent.bridge.event
+package nl.nuts.consent.event
 
 import net.corda.client.rpc.CordaRPCClient
 import net.corda.core.utilities.NetworkHostAndPort
-import nl.nuts.consent.bridge.CordaRPCProperties
+import nl.nuts.consent.CordaRPCProperties
+import nl.nuts.consent.messaging.ZeroMQService
 import nl.nuts.consent.state.ConsentState
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,9 +18,9 @@ class EventService {
     @Autowired
     lateinit var cordaRPCProperties: CordaRPCProperties
 
-    val mon = Object()
+    @Autowired
+    lateinit var zeroMQService: ZeroMQService
 
-    @Scheduled(fixedDelay = 1000)
     fun run() {
         // listen to state changes and print them
 
@@ -35,19 +35,18 @@ class EventService {
 
         feed.snapshot.states.forEach {
             logger.info(it.state.data.toString())
+
+            zeroMQService.publish(it.state.data.toString())
         }
 
         logger.info("Starting observable for new states")
 
         observable.subscribe { update ->
             update.produced.forEach {
-                logger.info("NEW STATE!")
                 logger.info(it.state.data.toString())
-            }
-        }
 
-        synchronized(mon) {
-            mon.wait()
+                zeroMQService.publish(it.state.data.toString())
+            }
         }
     }
 }

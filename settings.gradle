@@ -19,3 +19,4 @@
 include 'state'
 include 'cordapp'
 include 'bridge'
+include 'client'

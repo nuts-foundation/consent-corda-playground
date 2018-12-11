@@ -1,0 +1,40 @@
+buildscript {
+    repositories { mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'kotlin'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // Logging
+    compile "org.apache.logging.log4j:log4j-core:2.2"
+    compile "org.apache.logging.log4j:log4j-slf4j-impl:2.2"
+
+    // ZeroMQ
+    compile "org.zeromq:jeromq:0.4.3"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir rootProject.file("config/dev")
+        }
+    }
+}
+
+mainClassName = 'nl.nuts.consent.client.ZeroMQClientKt'
