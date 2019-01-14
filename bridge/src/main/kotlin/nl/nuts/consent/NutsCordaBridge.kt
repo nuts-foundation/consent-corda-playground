@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @Configuration
 @ConfigurationProperties("corda.rpc")
-data class CordaRPCProperties(var host: String = "localhost", var port:Int = 10006, var user:String = "user1", var password:String = "test")
+data class CordaRPCProperties(var host: String = "localhost", var port:Int = 10009, var user:String = "user1", var password:String = "test")
 
 @EnableAsync
 @EnableScheduling

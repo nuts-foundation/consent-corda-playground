@@ -37,12 +37,12 @@ import nl.nuts.consent.schema.ConsentSchemaV1
  * purpose: why is this consent given?
  * source: the type of proof that has the signed consent (document probably)
  */
-data class ConsentState(val patientId: String,
-                        val professionalId: String,
-                        val organisationId: String,
-                        val purpose: String,
-                        val source: String,
-                        val parties: List<Party>) : LinearState, QueryableState {
+data class ConsentState(val patientId: String = "",
+                        val professionalId: String = "",
+                        val organisationId: String = "",
+                        val purpose: String = "",
+                        val source: String = "",
+                        val parties: List<Party> = ArrayList()) : LinearState, QueryableState {
 
     // A good unique identifier would be ?????, The ConsentResourceProvider party should be presented in the externalId
     override val linearId: UniqueIdentifier get() = UniqueIdentifier("${professionalId}_${patientId}_${organisationId}")

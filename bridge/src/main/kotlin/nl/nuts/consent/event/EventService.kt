@@ -1,6 +1,8 @@
 package nl.nuts.consent.event
 
 import net.corda.client.rpc.CordaRPCClient
+import net.corda.core.node.services.Vault
+import net.corda.core.node.services.vault.*
 import net.corda.core.utilities.NetworkHostAndPort
 import nl.nuts.consent.CordaRPCProperties
 import nl.nuts.consent.messaging.ZeroMQService
@@ -28,7 +30,11 @@ class EventService {
         val nodeAddress = NetworkHostAndPort(cordaRPCProperties.host, cordaRPCProperties.port)
         val proxy = CordaRPCClient(nodeAddress).start(cordaRPCProperties.user, cordaRPCProperties.password).proxy
 
-        val feed= proxy.vaultTrack(ConsentState::class.java)
+        val feed = proxy.vaultTrackBy(
+                QueryCriteria.VaultQueryCriteria(status = Vault.StateStatus.ALL),
+                PageSpecification(DEFAULT_PAGE_NUM, 100),
+                Sort(setOf(Sort.SortColumn(SortAttribute.Standard(Sort.CommonStateAttribute.STATE_REF), Sort.Direction.ASC))),
+                ConsentState::class.java)
         val observable = feed.updates
 
         logger.info("Current states")
@@ -42,10 +48,16 @@ class EventService {
         logger.info("Starting observable for new states")
 
         observable.subscribe { update ->
+            logger.info("Received update")
             update.produced.forEach {
-                logger.info(it.state.data.toString())
+                logger.info("Add ${it.state.data}")
 
-                zeroMQService.publish(it.state.data.toString())
+                zeroMQService.publish("ADD_${it.state.data}")
+            }
+            update.consumed.forEach {
+                logger.info("Revoke ${it.state.data}")
+
+                zeroMQService.publish("REVOKE_${it.state.data}")
             }
         }
     }

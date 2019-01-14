@@ -51,7 +51,7 @@ fun main(args: Array<String>) {
         val string = subscriber.recvStr(0)
 
         // Example:
-        // 00000007_123456782_NE0001_4b548f3d-5219-4dff-ac31-47b47bc795bd
+        // METHOD_00000007_123456782_NE0001_4b548f3d-5219-4dff-ac31-47b47bc795bd
 
         logger.info("Received $string over ZeroMQ")
 
@@ -59,14 +59,25 @@ fun main(args: Array<String>) {
 
         val client = OkHttpClient()
 
-        val request = Request.Builder()
-                .method("POST", RequestBody.create(MediaType.get("application/json"), ""))
-                .url("http://localhost:8081/api/single?bsn=${parts[1]}&agb=${parts[0]}&organisation=${parts[2]}")
-                .build()
+        val request = if (parts[0] == "ADD") {
+            Request.Builder()
+                    .method("POST", RequestBody.create(MediaType.get("application/json"), ""))
+                    .url("http://localhost:8081/api/single?bsn=${parts[2]}&agb=${parts[1]}&organisation=${parts[3]}")
+                    .build()
+        } else { //revoke
+            Request.Builder()
+                    .method("DELETE", RequestBody.create(MediaType.get("application/json"), ""))
+                    .url("http://localhost:8081/api/single?bsn=${parts[2]}&agb=${parts[1]}&organisation=${parts[3]}")
+                    .build()
+        }
 
-        val response = client.newCall(request).execute()
-        response.use {
-            println("Succubus returned ${response.code()}")
+        try {
+            val response = client.newCall(request).execute()
+            response.use {
+                println("Succubus returned ${response.code()}")
+            }
+        } catch (e:Exception) {
+            println(e.message)
         }
     }
 }
