@@ -36,13 +36,20 @@ class ConsentContract : Contract {
     // does not throw an exception.
     override fun verify(tx: LedgerTransaction) {
         val command = tx.commands.requireSingleCommand<Commands>()
+
         requireThat {
             // generic contract constraints
-            "No input states are consumed." using (tx.inputs.isEmpty())
-            "Only one output state should be created." using (tx.outputs.size == 1)
-            val out = tx.outputsOfType<ConsentState>().single()
-            "All parties are unique." using (out.parties.toSet().size == out.parties.size)
-            "All participants must be signers." using (command.signers.containsAll(out.participants.map { it.owningKey }))
+            "The right amount of input states are consumed." using (tx.inputs.size == command.value.inputStatesConsumed())
+            "The right amount of output states are created." using (tx.outputs.size == command.value.outputStatesCreated())
+            if (command.value is Commands.Create) {
+                val out = tx.outputsOfType<ConsentState>().single()
+                "All parties are unique." using (out.parties.toSet().size == out.parties.size)
+                "All participants must be signers." using (command.signers.containsAll(out.participants.map { it.owningKey }))
+            }
+            if (command.value is Commands.Delete) {
+                val inState = tx.inputsOfType<ConsentState>().single()
+                "All participants must be signers." using (command.signers.containsAll(inState.participants.map { it.owningKey }))
+            }
 
             // no specific contstraints yet
         }
@@ -50,6 +57,17 @@ class ConsentContract : Contract {
 
     // Used to indicate the transaction's intent.
     interface Commands : CommandData {
-        class Create : Commands
+        fun inputStatesConsumed() : Int
+        fun outputStatesCreated() : Int
+
+        class Create : Commands {
+            override fun inputStatesConsumed() : Int { return 0 }
+            override fun outputStatesCreated() : Int { return 1 }
+        }
+
+        class Delete : Commands {
+            override fun inputStatesConsumed() : Int { return 1 }
+            override fun outputStatesCreated() : Int { return 0 }
+        }
     }
 }

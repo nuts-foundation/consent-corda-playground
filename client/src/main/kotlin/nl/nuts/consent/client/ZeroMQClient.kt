@@ -1,5 +1,9 @@
 package nl.nuts.consent.client
 
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.zeromq.ZMQ
@@ -10,11 +14,15 @@ fun main(args: Array<String>) {
 
     val context = ZMQ.context(1)
 
+    logger.info("Starting subscriber socket")
+
     //  First, connect our subscriber socket
     val subscriber = context.socket(ZMQ.SUB)
     subscriber.setRcvHWM(0)
     subscriber.connect("tcp://localhost:5561")
     subscriber.subscribe("".toByteArray())
+
+    logger.info("Starting req queue")
 
     //  Second, synchronize with publisher
     val syncclient = context.socket(ZMQ.REQ)
@@ -36,9 +44,29 @@ fun main(args: Array<String>) {
         }
     })
 
+    logger.info("Starting main loop")
+
     //  Third, get our updates and report how many we got
     while (true) {
         val string = subscriber.recvStr(0)
+
+        // Example:
+        // 00000007_123456782_NE0001_4b548f3d-5219-4dff-ac31-47b47bc795bd
+
         logger.info("Received $string over ZeroMQ")
+
+        val parts = string.split('_')
+
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+                .method("POST", RequestBody.create(MediaType.get("application/json"), ""))
+                .url("http://localhost:8081/api/single?bsn=${parts[1]}&agb=${parts[0]}&organisation=${parts[2]}")
+                .build()
+
+        val response = client.newCall(request).execute()
+        response.use {
+            println("Succubus returned ${response.code()}")
+        }
     }
 }

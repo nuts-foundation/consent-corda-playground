@@ -27,6 +27,9 @@ dependencies {
 
     // ZeroMQ
     compile "org.zeromq:jeromq:0.4.3"
+
+    // http
+    compile 'com.squareup.okhttp3:okhttp:3.12.1'
 }
 
 sourceSets {

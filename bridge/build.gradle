@@ -37,10 +37,13 @@ dependencies {
     compile(project(':state')) {
         exclude group: corda_release_group, module: 'corda-core'
     }
+    compile(project(':cordapp')) {
+        exclude group: corda_release_group, module: 'corda-core'
+    }
 
-    //compile("org.springframework.boot:spring-boot-starter-data-rest:${spring_boot_version}")
+    compile("org.springframework.boot:spring-boot-starter-data-rest:${spring_boot_version}")
     compile("org.springframework.boot:spring-boot-starter:${spring_boot_version}")
-    //compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jackson_version}")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // corda
@@ -56,9 +59,7 @@ dependencies {
     // ZeroMQ
     compile "org.zeromq:jeromq:0.4.3"
 
-    //compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:${jackson_version}"
-    //compile 'com.squareup.okhttp3:okhttp:3.10.0'
-    //compile 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:${jackson_version}"
 
     // health checks
     //compile("org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}")

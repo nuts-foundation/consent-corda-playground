@@ -70,7 +70,7 @@ class ConsentContractTests {
                         listOf(homeCare.publicKey, generalCare.publicKey),
                         ConsentContract.Commands.Create()
                 )
-                `fails with`("No input states are consumed.")
+                `fails with`("The right amount of input states are consumed.")
             }
         }
     }
@@ -91,7 +91,7 @@ class ConsentContractTests {
                         listOf(homeCare.publicKey, generalCare.publicKey),
                         ConsentContract.Commands.Create()
                 )
-                `fails with`("Only one output state should be created.")
+                `fails with`("The right amount of output states are created.")
             }
         }
     }

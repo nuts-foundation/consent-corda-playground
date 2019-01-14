@@ -29,7 +29,7 @@ import kotlin.test.assertEquals
 
 // some basic tests to get things started
 class ConsentFlowTests {
-    private val network = MockNetwork(listOf("nl.nuts.consent.contract"))
+    private val network = MockNetwork(listOf("nl.nuts.consent"))
     private val a = network.createPartyNode()
     private val b = network.createPartyNode()
 
