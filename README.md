@@ -1,3 +1,5 @@
+DEPRECATED. Corda is now actively used in Nuts. 
+
 ## How to run the example
 
 ### Deploy and start the Corda nodes
